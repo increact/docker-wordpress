@@ -1,0 +1,29 @@
+version: "3.5"
+
+services:
+
+  wordpress:
+    build: ./
+    volumes:
+      - ./wp-app:/var/www/wp-content # wordpress content
+    ports:
+      - "80"
+    networks:
+      exposenetwork:
+      net:
+    environment:
+      #DB_HOST: aws-rds.endpoint:3306
+      #DB_PASSWORD: wordpress
+      #DB_NAME: wordpress
+      #DB_USER: wordpress
+      WORDPRESS_SITE_URL: "${WEBSERVER_VIRTUAL_HOST}"
+      VIRTUAL_HOST: "${WEBSERVER_VIRTUAL_HOST}"
+      FS_METHOD: direct
+
+networks:
+  # Join proxy network for exposing http services
+  exposenetwork:
+    name: web_proxy
+    external: true
+  # Internal network for this project
+  net:

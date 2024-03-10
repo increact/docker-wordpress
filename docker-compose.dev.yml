@@ -4,7 +4,12 @@ services:
   db:
     image: mariadb:10.11
     volumes:
+      #- ./wp-data:/docker-entrypoint-initdb.d
       - "db-data:/var/lib/mysql"
+    ports:
+      - "3306"
+    networks:
+      net:
     environment:
       MYSQL_ROOT_PASSWORD: wordpress
       MYSQL_DATABASE: wordpress
@@ -16,15 +21,19 @@ services:
       - db
     build: ./
     volumes:
-      - "site-data:/var/www/wp-content"
+      - ./wp-app:/var/www/wp-content # wordpress content
     ports:
-      - "8123:80"
+      - "80"
+    networks:
+      exposenetwork:
+      net:
     environment:
       DB_HOST: db
       DB_PASSWORD: wordpress
       DB_NAME: wordpress
       DB_USER: wordpress
-      WORDPRESS_SITE_URL: http://localhost:8123
+      WORDPRESS_SITE_URL: "${WEBSERVER_VIRTUAL_HOST}"
+      VIRTUAL_HOST: "${WEBSERVER_VIRTUAL_HOST}"
       FS_METHOD: direct
       # For debugging only:
       #WP_DEBUG: "true"
@@ -32,12 +41,11 @@ services:
 
 volumes:
   db-data:
-  site-data:
 
 networks:
-  default:
-    driver: bridge
-    ipam:
-      driver: default
-      config:
-        - subnet: 192.168.91.0/24
+  # Join proxy network for exposing http services
+  exposenetwork:
+    name: web_proxy
+    external: true
+  # Internal network for this project
+  net:
