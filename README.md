@@ -31,6 +31,12 @@ This image includes [wp-cli](https://wp-cli.org/) which can be used like this:
 
     docker exec <your container name> /usr/local/bin/wp --path=/usr/src/wordpress <your command>
 
+# thing to update being use
+Dockerfile wordpress version
+config/msmtprc domain name
+.env
+docker-compose service information
+BE REINDED that config file is cpy into the docker during start up, any change require to re build the docker image
 
 ## forked from 
 

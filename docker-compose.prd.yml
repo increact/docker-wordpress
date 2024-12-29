@@ -6,11 +6,15 @@ services:
     build: ./
     volumes:
       - ./wp-app:/var/www/wp-content # wordpress content
+      - ./config/msmtprc:/etc/msmtprc:ro
     ports:
       - "80"
+      - "443"
     networks:
       exposenetwork:
       net:
+    depends_on:
+      - mta
     environment:
       #DB_HOST: aws-rds.endpoint:3306
       #DB_PASSWORD: wordpress
@@ -19,6 +23,16 @@ services:
       WORDPRESS_SITE_URL: "${WEBSERVER_VIRTUAL_HOST}"
       VIRTUAL_HOST: "${WEBSERVER_VIRTUAL_HOST}"
       FS_METHOD: direct
+      ENABLE_ACME: 'true'
+
+  mta:
+    image: namshi/smtp
+    environment:
+      - SMARTHOST_ADDRESS
+      - MAILNAME=mta
+    networks:
+      net:
+    restart: always
 
 networks:
   # Join proxy network for exposing http services

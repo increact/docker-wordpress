@@ -34,6 +34,7 @@ RUN apk --no-cache add \
   supervisor \
   curl \
   bash \
+  msmtp \
   less
 
 # Configure nginx
